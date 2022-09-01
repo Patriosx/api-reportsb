@@ -1,0 +1,15 @@
+### get users
+GET http://localhost:5000/account/users/
+
+### Crear un usuario
+POST http://localhost:5000/auth/signup/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "email": "test@click2luck.com",
+    "fullname": "test",
+    "phone":"928 654 130",
+    "password": "password",
+    "currentLocation": {"lat":20.55, "lng":-55.96},
+    "address": "mi casa"
+}

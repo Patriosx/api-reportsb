@@ -1,0 +1,19 @@
+### get users
+GET http://localhost:5000/account/users/
+
+### add stolen bike
+POST http://localhost:5000/case/stolen_bike/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "brand": "marca",
+    "model": "modelo x",
+    "license":"XL-5200",
+    "color": "Yellow and blue",
+    "type": "classic",
+    "desc": "the front tire is white",
+    "owner": "63110ed453c6bfd7a828f25f"
+}
+
+### get bike back
+GET http://localhost:5000/case/recovery_bike/6310af2099873cffd9d71c90
