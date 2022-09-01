@@ -37,3 +37,39 @@ module.exports.signup = (req, res, next) => {
     })
     .catch((err) => next(createError(500, err.message)));
 };
+
+//Police
+module.exports.loginPolice = (req, res, next) => {
+  const { body } = req;
+  //comprobar parametros
+  if (!body.email) return next(createError(500, "email not provided"));
+  if (!body.password) return next(createError(500, "password not provided"));
+
+  const Police = getModelByName("police");
+
+  Police.login(body.email, body.password)
+    .then((data) => {
+      //data = access_token
+      res
+        .cookie("access_token", data.access_token, { httpOnly: true })
+        .status(200)
+        .send({ success: true, data });
+    })
+    .catch((err) => next(createError(500, err.message)));
+};
+module.exports.signupPolice = (req, res, next) => {
+  const { body } = req;
+  if (!body)
+    return res
+      .status(200)
+      .send({ success: false, error: "police info not found" });
+
+  const Police = getModelByName("police");
+  return Police.signup(body)
+    .then(() => {
+      res
+        .status(201)
+        .send({ success: true, message: "successfully signed up" });
+    })
+    .catch((err) => next(createError(500, err.message)));
+};
