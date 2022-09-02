@@ -39,7 +39,7 @@ app.use((err, req, res, next) => {
 });
 //* Se usa para vincular y escuchar las conecciones en un puerto*//
 //Ejecutamos nuestra aplicación en el puerto 5000.
-app.listen(5000, () => {
+app.listen(process.env.PORT || 5000, () => {
   //* MongoDB connection *//
   db_connection();
   console.log("Listening ");
