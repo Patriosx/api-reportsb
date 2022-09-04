@@ -1,0 +1,14 @@
+### get departments
+GET http://localhost:5000/department/
+
+### register new department
+POST http://localhost:5000/department/new_department/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "name": "Dep Los alcachofas",
+    "city": "Las Palmas de GC"
+}
+
+### add police officer to department
+GET http://localhost:5000/department/add_police_officer/631491ae36f6718c410453eb/6310c6e002d3d92788de54a0

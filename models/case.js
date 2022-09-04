@@ -2,9 +2,9 @@ const mongoose = require("mongoose");
 
 const CaseSchema = mongoose.Schema(
   {
-    assignedOfficer: { type: mongoose.Types.ObjectId, ref: "police" },
+    assignedOfficer: { type: mongoose.Types.ObjectId, ref: "policeOfficer" },
     stolenBike: { type: mongoose.Types.ObjectId, ref: "bike" },
-    active: true, //status
+    active: { type: Boolean, default: false }, //status
     descriptionTheft: { type: String },
     date: { type: Date },
     locationTheft: { type: Object },

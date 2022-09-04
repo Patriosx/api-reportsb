@@ -21,9 +21,9 @@ BikeSchema.statics.removeStolenBike = removeStolenBike;
 module.exports = mongoose.model("bike", BikeSchema, "bikes");
 
 function addStolenBike(bikeInfo) {
-  if (!bikeInfo.color) throw new Error("color require");
-  if (!bikeInfo.type) throw new Error("type require");
-  if (!bikeInfo.license) throw new Error("license require");
+  if (!bikeInfo.color) throw new Error("color required");
+  if (!bikeInfo.type) throw new Error("type required");
+  if (!bikeInfo.license) throw new Error("license required");
 
   return User.findById(bikeInfo.owner).then((user) => {
     if (!user) throw new Error("user not found");

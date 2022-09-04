@@ -1,37 +1,37 @@
 const getModelByName = require("../db/getModelByName");
 const { createError } = require("../helpers");
 
-module.exports.getPolices = (req, res, next) => {
-  const Police = getModelByName("police");
-  return Police.getPolices()
-    .then((polices) => {
+module.exports.getPolice = (req, res, next) => {
+  const Police = getModelByName("policeOfficer");
+  return Police.getPolice()
+    .then((policeOfficer) => {
       res
         .status(200)
-        .send({ success: true, message: "successfully", data: polices });
+        .send({ success: true, message: "successfully", data: policeOfficer });
     })
     .catch((err) => next(createError(500, err.message)));
 };
 
-module.exports.getPoliceById = (req, res, next) => {
+module.exports.getPoliceOfficerById = (req, res, next) => {
   const { body } = req;
   if (!body)
     return res.status(200).send({
       success: false,
-      error: "police info not found",
-      data: { police: null },
+      error: "policeOfficer info not found",
+      data: { policeOfficer: null },
     });
 
-  const Police = getModelByName("police");
+  const Police = getModelByName("policeOfficer");
 
-  return Police.getPoliceById(body._id)
-    .then((police) => {
-      res.status(200).send({ success: true, data: { police } });
+  return Police.getPoliceOfficerById(body.id)
+    .then((policeOfficer) => {
+      res.status(200).send({ success: true, data: { policeOfficer } });
     })
     .catch((err) => next(createError(500, err.message)));
 };
 
 module.exports.confirmAccount = (req, res, next) => {
-  const Police = getModelByName("police");
+  const Police = getModelByName("policeOfficer");
 
   //le pasamos el token
   return Police.confirmAccount(req.params.token)
@@ -44,26 +44,30 @@ module.exports.confirmAccount = (req, res, next) => {
 };
 
 module.exports.getCurrentPolice = (req, res, next) => {
-  //busacmos req.police
-  if (!req.police) return next(createError(500, "police not authorized"));
+  //busacmos req.policeOfficer
+  if (!req.policeOfficer)
+    return next(createError(500, "policeOfficer not authorized"));
 
-  const Police = getModelByName("police");
+  const Police = getModelByName("policeOfficer");
 
-  return Police.getPoliceById(req.police._id)
-    .then((police) => res.status(200).send({ success: true, data: { police } }))
+  return Police.getPoliceOfficerById(req.policeOfficer._id)
+    .then((policeOfficer) =>
+      res.status(200).send({ success: true, data: { policeOfficer } })
+    )
     .catch((err) => next(createError(500, err.message)));
 };
 
-module.exports.updatePolice = (req, res, next) => {
-  if (!req.body) return next(createError(400, "police not provided"));
-  const policeId = req.params.id;
-  const Police = getModelByName("police");
+module.exports.updatePoliceOfficer = (req, res, next) => {
+  if (!req.body) return next(createError(400, "policeOfficer not provided"));
+  const policeOfficerId = req.params.id;
+  const Police = getModelByName("policeOfficer");
 
-  Police.updatePolice(policeId, req.body)
-    .then((police) => {
-      if (!police) return next(createError(500, "police not found"));
+  Police.updatePoliceOfficer(policeOfficerId, req.body)
+    .then((policeOfficer) => {
+      if (!policeOfficer)
+        return next(createError(500, "policeOfficer not found"));
 
-      const { password, isAdmin, ...otherData } = police._doc;
+      const { password, isAdmin, ...otherData } = policeOfficer._doc;
       return res.status(201).send({ success: true, data: otherData });
     })
     .catch((err) => next(createError(500, err.message)));
@@ -73,10 +77,10 @@ module.exports.updatePassword = (req, res, next) => {
   const { newPassword, oldPassword } = req.body;
   if (!req.body) return next(createError(400, "password not provided"));
 
-  const policeId = req.params.id;
-  const Police = getModelByName("police");
+  const policeOfficerId = req.params.id;
+  const Police = getModelByName("policeOfficer");
 
-  Police.updatePassword(policeId, oldPassword, newPassword)
+  Police.updatePassword(policeOfficerId, oldPassword, newPassword)
     .then(() => {
       return res
         .status(201)
@@ -86,10 +90,10 @@ module.exports.updatePassword = (req, res, next) => {
 };
 
 module.exports.deleteAccount = (req, res, next) => {
-  const policeId = req.params.id;
+  const policeOfficerId = req.params.id;
 
-  const Police = getModelByName("police");
-  Police.deleteAccount(policeId)
+  const Police = getModelByName("policeOfficer");
+  Police.deleteAccount(policeOfficerId)
     .then(() => {
       return res
         .status(201)
