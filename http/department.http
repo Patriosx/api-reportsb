@@ -11,4 +11,10 @@ Content-Type: application/json
 }
 
 ### add police officer to department
-GET http://localhost:5000/department/add_police_officer/631491ae36f6718c410453eb/6310c6e002d3d92788de54a0
+POST http://localhost:5000/department/add_police_officer HTTP/1.1
+Content-Type: application/json
+
+{
+    "name": "Dep. Los ",
+    "city": "Jhon McDonald",
+}

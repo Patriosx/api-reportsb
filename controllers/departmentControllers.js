@@ -38,11 +38,15 @@ module.exports.transferPoliceOfficer = (req, res, next) => {
   const { newDepartmentId, policeOfficerId } = req.body;
   const Department = getModelByName("department");
 
-  return Department.transferPoliceOfficer(newDepartmentId, policeOfficerId)
-    .then((department) => {
-      res
-        .status(200)
-        .send({ success: true, message: "successfully", data: department });
+  // return Department.transferPoliceOfficer(newDepartmentId, policeOfficerId);
+
+  Department.removePoliceOfficer(policeOfficerId)
+    .then(() => {
+      Department.addPoliceOfficer(newDepartmentId, policeOfficerId)
+        .then((data) =>
+          res.status(200).send({ success: true, message: "successfully", data })
+        )
+        .catch((err) => next(createError(500, err.message)));
     })
     .catch((err) => next(createError(500, err.message)));
 };
@@ -51,6 +55,17 @@ module.exports.removePoliceOfficer = (req, res, next) => {
   const Department = getModelByName("department");
 
   return Department.removePoliceOfficer(policeOfficerId)
+    .then((department) => {
+      res
+        .status(200)
+        .send({ success: true, message: "successfully", data: department });
+    })
+    .catch((err) => next(createError(500, err.message)));
+};
+module.exports.cleanDepartment = (req, res, next) => {
+  const Department = getModelByName("department");
+  const { departmentId } = req.body;
+  return Department.cleanDepartment(departmentId)
     .then((department) => {
       res
         .status(200)

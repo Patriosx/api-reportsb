@@ -16,6 +16,7 @@ DepartmentSchema.statics.createDepartment = createDepartment;
 DepartmentSchema.statics.getDepartments = getDepartments;
 DepartmentSchema.statics.transferPoliceOfficer = transferPoliceOfficer;
 DepartmentSchema.statics.removePoliceOfficer = removePoliceOfficer;
+DepartmentSchema.statics.cleanDepartment = cleanDepartment;
 
 module.exports = mongoose.model("department", DepartmentSchema, "departments");
 
@@ -39,12 +40,15 @@ function addPoliceOfficer(departmentId, policeOfficerId) {
         .then((_session) => {
           session = _session;
           session.startTransaction();
+
           policeOfficer.department = department;
           policeOfficer.save({ session });
 
           department.policeOfficerList.push(policeOfficer);
           department.save({ session });
           session.commitTransaction();
+          console.log("added to department");
+          return policeOfficer;
         })
         .then(() => session.endSession())
         .catch(() => session.abortTransaction());
@@ -66,8 +70,9 @@ function transferPoliceOfficer(newDepartmentId, policeOfficerId) {
   //   if (!oldDepartmentId) throw new Error("old DepartmentId required");
   if (!policeOfficerId) throw new Error("policeOfficerId required");
 
-  //
   removePoliceOfficer(policeOfficerId);
+
+  addPoliceOfficer(newDepartmentId, policeOfficerId);
 }
 function removePoliceOfficer(policeOfficerId) {
   if (!policeOfficerId) throw new Error("policeOfficerId required");
@@ -75,12 +80,30 @@ function removePoliceOfficer(policeOfficerId) {
   return PoliceOfficer.findById(policeOfficerId)
     .populate("department")
     .then((policeOfficer) => {
-      //delete officer from department
-      policeOfficer.department.policeOfficerList.pull(policeOfficerId);
-      policeOfficer.department.save();
+      let session = null;
 
-      //remove department from policeOfficer
-      policeOfficer.department = null;
-      policeOfficer.save();
+      return mongoose
+        .startSession()
+        .then((_session) => {
+          session = _session;
+          session.startTransaction();
+          //delete officer from department
+          policeOfficer.department.policeOfficerList.pull(policeOfficerId);
+          policeOfficer.department.save({ session });
+
+          //remove department from policeOfficer
+          policeOfficer.department = null;
+          policeOfficer.save({ session });
+          session.commitTransaction();
+          console.log("removed");
+        })
+        .then(() => session.endSession())
+        .catch(() => session.abortTransaction());
     });
+}
+function cleanDepartment(departmentId) {
+  return this.findById(departmentId).then((department) => {
+    department.policeOfficerList = [];
+    department.save();
+  });
 }

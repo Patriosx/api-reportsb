@@ -54,25 +54,23 @@ function signup(userInfo) {
   if (!userInfo.fullname) throw new Error("name is required");
   if (!userInfo.password) throw new Error("password is required");
 
-  return (
-    this.findOne({ email: userInfo.email })
-      .then((user) => {
-        if (user) throw new Error("user already exists");
+  return this.findOne({ email: userInfo.email })
+    .then((user) => {
+      if (user) throw new Error("user already exists");
 
-        const newUser = {
-          email: userInfo.email,
-          fullname: userInfo.fullname,
-          password: bcrypt.hashSync(userInfo.password),
-          phone: userInfo.phone,
-          currentLocation: userInfo.currentLocation,
-          address: userInfo.address,
-        };
+      const newUser = {
+        email: userInfo.email,
+        fullname: userInfo.fullname,
+        password: bcrypt.hashSync(userInfo.password),
+        phone: userInfo.phone,
+        currentLocation: userInfo.currentLocation,
+        address: userInfo.address,
+      };
 
-        return this.create(newUser);
-      })
-      // .then((userCreated) => sendConfirmationAccount(userCreated))
-      .then((user) => user)
-  );
+      return this.create(newUser);
+    })
+    .then((userCreated) => sendConfirmationAccount(userCreated))
+    .then((user) => user);
 }
 function updateUser(userId, body) {
   return this.findByIdAndUpdate(userId, { $set: body }, { new: true }).then(

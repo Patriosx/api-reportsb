@@ -45,7 +45,7 @@ module.exports.loginPolice = (req, res, next) => {
   if (!body.email) return next(createError(500, "email not provided"));
   if (!body.password) return next(createError(500, "password not provided"));
 
-  const Police = getModelByName("police");
+  const Police = getModelByName("policeOfficer");
 
   Police.login(body.email, body.password)
     .then((data) => {
@@ -62,9 +62,9 @@ module.exports.signupPolice = (req, res, next) => {
   if (!body)
     return res
       .status(200)
-      .send({ success: false, error: "police info not found" });
+      .send({ success: false, error: "policeOfficer info not found" });
 
-  const Police = getModelByName("police");
+  const Police = getModelByName("policeOfficer");
   return Police.signup(body)
     .then(() => {
       res
