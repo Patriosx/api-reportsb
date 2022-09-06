@@ -79,12 +79,12 @@ function updateUser(userId, body) {
 }
 function sendConfirmationAccount(user) {
   let transporter = nodemailer.createTransport({
-    host: /**/ process.env.SMTP_HOST /**/ /* "smtp.ionos.es"*/,
+    host: process.env.SMTP_HOST,
     port: 587,
-    secure: false, // upgrade later with STARTTLS
+    secure: false,
     auth: {
-      user: /**/ process.env.SMTP_USER /** "noreply@Movilidadelectrica.club"*/,
-      pass: /**/ process.env.SMTP_KEY /**  "5X8A&DX3kYD$6Yoe4F;dr3"**/,
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_KEY,
     },
   });
   //creamos token para enviar el email dentro
@@ -93,7 +93,7 @@ function sendConfirmationAccount(user) {
 
   //verificar transporter
   return transporter.sendMail({
-    from: /**/ process.env.MAIL_ADMIN /**/ /*"desarrollo@click2luck.com"*/,
+    from: process.env.MAIL_ADMIN,
     to: user.email,
     subject: "Please confirm your email.",
     html: `<p>Confirm your email <a href="${urlConfirmation}">here<a/></p>`,

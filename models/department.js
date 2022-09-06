@@ -7,6 +7,7 @@ const DepartmentSchema = mongoose.Schema(
     policeOfficerList: [
       { type: mongoose.Types.ObjectId, ref: "policeOfficer" },
     ],
+    freeAgentList: [{ type: mongoose.Types.ObjectId, ref: "freeAgent" }],
   },
   { timestamps: true }
 );

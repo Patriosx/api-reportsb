@@ -1,12 +1,20 @@
 ### get departments
 GET http://localhost:5000/department/
 
+### clean department
+POST localhost:5000/department/clean HTTP/1.1
+Content-Type: application/json
+
+{
+	"departmentId":"631491ae36f6718c410453eb"
+}
+
 ### register new department
 POST http://localhost:5000/department/new_department/ HTTP/1.1
 Content-Type: application/json
 
 {
-    "name": "Dep Los alcachofas",
+    "name": "Dep Hurracas frias",
     "city": "Las Palmas de GC"
 }
 
@@ -15,6 +23,6 @@ POST http://localhost:5000/department/add_police_officer HTTP/1.1
 Content-Type: application/json
 
 {
-    "name": "Dep. Los ",
-    "city": "Jhon McDonald",
+	"departmentId":"631491ae36f6718c410453eb", 
+	"officerId":"6315f5a47e1a85b48ceece02"
 }

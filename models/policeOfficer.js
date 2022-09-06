@@ -12,6 +12,7 @@ const policeOfficerSchema = mongoose.Schema(
     password: { type: String, required: true },
     emailVerified: { type: Boolean, default: false },
     isAdmin: { type: Boolean, default: false }, //director
+    free: { type: Boolean, default: true }, //ready to take a case
     department: {
       type: mongoose.Types.ObjectId,
       ref: "department",
@@ -30,6 +31,7 @@ policeOfficerSchema.statics.confirmAccount = confirmAccount;
 policeOfficerSchema.statics.updatePoliceOfficer = updatePoliceOfficer;
 policeOfficerSchema.statics.updatePassword = updatePassword;
 policeOfficerSchema.statics.deleteAccount = deleteAccount;
+policeOfficerSchema.statics.searchFreeAgent = searchFreeAgent;
 
 module.exports = mongoose.model(
   "policeOfficer",
@@ -118,7 +120,7 @@ function confirmAccount(token) {
   });
 }
 function getPolice() {
-  return this.find().then((policeOfficer) => policeOfficer);
+  return this.find().then((policeOfficers) => policeOfficers);
 }
 function getPoliceOfficerById(id) {
   return this.findById(id).then((policeOfficer) => {
@@ -182,4 +184,7 @@ function deleteAccount(policeOfficerId) {
   return this.findByIdAndDelete(policeOfficerId).then(
     (policeOfficer) => policeOfficer
   );
+}
+function searchFreeAgent() {
+  return this.find({ free: { $eq: true } });
 }

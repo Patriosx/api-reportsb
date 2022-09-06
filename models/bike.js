@@ -10,6 +10,7 @@ const BikeSchema = mongoose.Schema(
     desc: { type: String },
     img: [{ type: String }],
     owner: { type: mongoose.Types.ObjectId, ref: "user" },
+    case: { type: mongoose.Types.ObjectId, ref: "case", default: null },
   },
   { timestamps: true }
 );

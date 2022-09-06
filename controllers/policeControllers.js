@@ -101,3 +101,15 @@ module.exports.deleteAccount = (req, res, next) => {
     })
     .catch((err) => next(createError(500, err.message)));
 };
+module.exports.searchFreeAgent = (req, res, next) => {
+  const Police = getModelByName("policeOfficer");
+  return Police.searchFreeAgent()
+    .then((freeAgents) =>
+      res.status(200).send({
+        success: true,
+        message: "free agent successfully recieved",
+        freeAgents,
+      })
+    )
+    .catch((err) => next(createError(500, "failed to get free agents")));
+};
