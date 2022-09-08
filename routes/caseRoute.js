@@ -3,20 +3,18 @@ const {
   addStolenBike,
   removeStolenBike,
 } = require("../controllers/bikeControllers");
-const {
-  openNewCase,
-  getCases,
-  getCaseById,
-  checkCase,
-} = require("../controllers/caseControllers");
+const caseCtrol = require("../controllers/caseControllers");
 
 const router = express.Router();
 
 router.post("/stolen_bike", addStolenBike);
 router.get("/recovery_bike/:id", removeStolenBike);
-router.post("/new_case", openNewCase);
-router.get("/", getCases);
-router.get("/:id", getCaseById);
-router.get("/check/:id", checkCase);
+
+router.post("/new_case", caseCtrol.openNewCase);
+router.get("/", caseCtrol.getCases);
+router.get("/:id", caseCtrol.getCaseById);
+router.get("/check/:id", caseCtrol.getCasesByUser);
+router.get("/test/test", caseCtrol.test);
+router.post("/solve", caseCtrol.solveCase);
 
 module.exports = router;

@@ -7,7 +7,6 @@ const DepartmentSchema = mongoose.Schema(
     policeOfficerList: [
       { type: mongoose.Types.ObjectId, ref: "policeOfficer" },
     ],
-    freeAgentList: [{ type: mongoose.Types.ObjectId, ref: "freeAgent" }],
   },
   { timestamps: true }
 );
@@ -68,7 +67,6 @@ function getDepartments() {
 }
 function transferPoliceOfficer(newDepartmentId, policeOfficerId) {
   if (!newDepartmentId) throw new Error("new DepartmentId required");
-  //   if (!oldDepartmentId) throw new Error("old DepartmentId required");
   if (!policeOfficerId) throw new Error("policeOfficerId required");
 
   removePoliceOfficer(policeOfficerId);

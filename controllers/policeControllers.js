@@ -113,3 +113,16 @@ module.exports.searchFreeAgent = (req, res, next) => {
     )
     .catch((err) => next(createError(500, "failed to get free agents")));
 };
+module.exports.releasePoliceOfficerFromCase = (req, res, next) => {
+  const Police = getModelByName("policeOfficer");
+  //free agent
+  return Police.releasePoliceOfficerFromCase(req.body.policeOfficerId)
+    .then(() => {
+      return res
+        .status(201)
+        .send({ success: true, message: "police released from case" });
+    })
+    .catch((err) => next(createError(500, err.message)));
+};
+
+//search case available: active=false, solved=false

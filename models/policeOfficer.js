@@ -32,6 +32,9 @@ policeOfficerSchema.statics.updatePoliceOfficer = updatePoliceOfficer;
 policeOfficerSchema.statics.updatePassword = updatePassword;
 policeOfficerSchema.statics.deleteAccount = deleteAccount;
 policeOfficerSchema.statics.searchFreeAgent = searchFreeAgent;
+policeOfficerSchema.statics.releasePoliceOfficerFromCase =
+  releasePoliceOfficerFromCase;
+policeOfficerSchema.statics.givePoliceOfficerToCase = givePoliceOfficerToCase;
 
 module.exports = mongoose.model(
   "policeOfficer",
@@ -123,15 +126,7 @@ function getPolice() {
   return this.find().then((policeOfficers) => policeOfficers);
 }
 function getPoliceOfficerById(id) {
-  return this.findById(id).then((policeOfficer) => {
-    return {
-      id: policeOfficer.id,
-      email: policeOfficer.email,
-      emailVerified: policeOfficer.emailVerified,
-      isAdmin: policeOfficer.isAdmin,
-      department: policeOfficer.department,
-    };
-  });
+  return this.findById(id).then((policeOfficer) => policeOfficer);
 }
 function login(emailInput, passwordInput) {
   //comprueba el formato del email
@@ -187,4 +182,20 @@ function deleteAccount(policeOfficerId) {
 }
 function searchFreeAgent() {
   return this.find({ free: { $eq: true } });
+}
+function releasePoliceOfficerFromCase(policeOfficerId) {
+  if (!policeOfficerId) throw new Error("policeOfficerId required");
+  return this.getPoliceOfficerById(policeOfficerId).then((policeOfficer) => {
+    if (!policeOfficer) return next(createError(500, "police not found"));
+    policeOfficer.free = true;
+    return policeOfficer.save();
+  });
+}
+function givePoliceOfficerToCase(policeOfficerId) {
+  if (!policeOfficerId) throw new Error("policeOfficer Id required");
+  return this.getPoliceOfficerById(policeOfficerId).then((policeOfficer) => {
+    if (!policeOfficer) return next(createError(500, "police not found"));
+    policeOfficer.free = false;
+    return policeOfficer.save();
+  });
 }

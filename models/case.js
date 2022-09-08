@@ -7,13 +7,13 @@ const CaseSchema = mongoose.Schema(
       type: mongoose.Types.ObjectId,
       ref: "policeOfficer",
       default: null,
-      // unique: true,
+      unique: false,
     },
     stolenBike: {
       type: mongoose.Types.ObjectId,
       ref: "bike",
       required: true,
-      // unique: true,
+      unique: true,
     },
     active: { type: Boolean, default: false }, //status
     descriptionTheft: { type: String, required: true },
@@ -28,7 +28,10 @@ CaseSchema.statics.openNewCase = openNewCase;
 CaseSchema.statics.getCases = getCases;
 CaseSchema.statics.notifyUser = notifyUser;
 CaseSchema.statics.getCaseById = getCaseById;
-CaseSchema.statics.checkCase = checkCase;
+CaseSchema.statics.getCasesByUser = getCasesByUser;
+CaseSchema.statics.solveCase = solveCase;
+CaseSchema.statics.searchPendingCase = searchPendingCase;
+CaseSchema.statics.addPoliceOfficerToCase = addPoliceOfficerToCase;
 
 //modelo, schema, tablas
 module.exports = mongoose.model("case", CaseSchema, "cases");
@@ -46,7 +49,7 @@ function openNewCase(caseInfo) {
 function getCases() {
   return this.find();
 }
-function notifyUser(user) {
+async function notifyUser(user) {
   let transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: 587,
@@ -56,9 +59,16 @@ function notifyUser(user) {
       pass: process.env.SMTP_KEY,
     },
   });
-  const result = this.checkCase(user._id);
-  console.log(result);
-  const URL = `${process.env.API_GATEWAY_URL}/case/${"caseID"}`;
+  const URL = `${process.env.API_GATEWAY_URL}/case`;
+  const result = await this.getCasesByUser(user._id);
+
+  const renderCases = result.map((caseId) => {
+    if (caseId !== null)
+      return ` <p>
+        Go and check your case <a href="${URL}/${caseId}">${caseId}</a>
+      </p>`;
+  });
+
   //verificar transporter
   return transporter.sendMail({
     from: process.env.MAIL_ADMIN,
@@ -66,22 +76,44 @@ function notifyUser(user) {
     subject: "Your case has changed.",
     html: `
     <h4>Hi ${user.fullname}
-
-    <p>Go and check your case <a href="${URL}">HERE</a></p>
+      ${renderCases}
+    
     `,
   });
 }
 function getCaseById(caseId) {
-  return this.findById(caseId);
+  return this.findById(caseId).then((caseData) => {
+    if (!caseData) throw new Error("Case not found");
+    return caseData;
+  });
 }
-function solveCase(caseInfo) {
-  //free agent
+function solveCase(caseId) {
+  if (!caseId) throw new Error("case ID required");
   //case solved
+  return this.findById(caseId).then((caseData) => {
+    caseData.resolved = true;
+    caseData.active = false;
+    return caseData.save();
+  });
 }
-function checkCase(userId) {
-  return User.findById(userId)
+//get cases by user
+async function getCasesByUser(userId) {
+  return await User.findById(userId)
     .populate("stolenBikes")
     .then((user) => {
       return user.stolenBikes.map((bike) => bike.case);
     });
+}
+function searchPendingCase() {
+  return this.find({
+    $and: [{ active: { $eq: false } }, { resolved: { $eq: false } }],
+  });
+}
+function addPoliceOfficerToCase(policeOfficerId, caseId) {
+  return this.findById(caseId).then((caseData) => {
+    if (!caseData) throw new Error("Case not found");
+
+    caseData.assignedOfficer = policeOfficerId;
+    return caseData.save();
+  });
 }

@@ -17,6 +17,7 @@ const BikeSchema = mongoose.Schema(
 
 BikeSchema.statics.addStolenBike = addStolenBike;
 BikeSchema.statics.removeStolenBike = removeStolenBike;
+BikeSchema.statics.addCaseToBike = addCaseToBike;
 //Methods
 
 module.exports = mongoose.model("bike", BikeSchema, "bikes");
@@ -79,4 +80,11 @@ function removeStolenBike(bikeId) {
         .catch((err) => session.abortTransaction());
       /**/
     });
+}
+function addCaseToBike(bikeId, caseId) {
+  return this.findById(bikeId).then((bike) => {
+    //add caseID to bike
+    bike.case = caseId;
+    bike.save();
+  });
 }
