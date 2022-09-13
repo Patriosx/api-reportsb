@@ -14,7 +14,6 @@ const DepartmentSchema = mongoose.Schema(
 DepartmentSchema.statics.addPoliceOfficer = addPoliceOfficer;
 DepartmentSchema.statics.createDepartment = createDepartment;
 DepartmentSchema.statics.getDepartments = getDepartments;
-DepartmentSchema.statics.transferPoliceOfficer = transferPoliceOfficer;
 DepartmentSchema.statics.removePoliceOfficer = removePoliceOfficer;
 DepartmentSchema.statics.cleanDepartment = cleanDepartment;
 
@@ -26,6 +25,7 @@ function addPoliceOfficer(departmentId, policeOfficerId) {
   if (!departmentId) throw new Error("Department Id required");
 
   return this.findById(departmentId).then((department) => {
+    //validation
     if (!department) throw new Error("Department not found");
     const exist = department.policeOfficerList.includes(policeOfficerId);
     if (exist) throw new Error("Police Officer is already in this department ");
@@ -40,17 +40,15 @@ function addPoliceOfficer(departmentId, policeOfficerId) {
         .then((_session) => {
           session = _session;
           session.startTransaction();
-
+          //insert department in the policeOfficer
           policeOfficer.department = department;
           policeOfficer.save({ session });
-
+          //insert the policeOfficer in the department list
           department.policeOfficerList.push(policeOfficer);
           department.save({ session });
           session.commitTransaction();
-          console.log("added to department");
-          return policeOfficer;
+          session.endSession();
         })
-        .then(() => session.endSession())
         .catch(() => session.abortTransaction());
     });
   });
@@ -64,14 +62,6 @@ function createDepartment(departmentInfo) {
 }
 function getDepartments() {
   return this.find();
-}
-function transferPoliceOfficer(newDepartmentId, policeOfficerId) {
-  if (!newDepartmentId) throw new Error("new DepartmentId required");
-  if (!policeOfficerId) throw new Error("policeOfficerId required");
-
-  removePoliceOfficer(policeOfficerId);
-
-  addPoliceOfficer(newDepartmentId, policeOfficerId);
 }
 function removePoliceOfficer(policeOfficerId) {
   if (!policeOfficerId) throw new Error("policeOfficerId required");

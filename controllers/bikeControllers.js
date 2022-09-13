@@ -8,10 +8,12 @@ module.exports.addStolenBike = (req, res, next) => {
   const Bike = getModelByName("bike");
 
   return Bike.addStolenBike(body)
-    .then(() => {
-      res
-        .status(201)
-        .send({ success: true, message: "bike successfully added" });
+    .then((bike) => {
+      res.status(201).send({
+        success: true,
+        message: "bike successfully added",
+        data: bike,
+      });
     })
     .catch((err) => next(createError(500, err.message)));
 };
@@ -26,6 +28,70 @@ module.exports.removeStolenBike = (req, res, next) => {
       res
         .status(201)
         .send({ success: true, message: "bike successfully recovered" });
+    })
+    .catch((err) => next(createError(500, err.message)));
+};
+module.exports.searchBike = (req, res, next) => {
+  const Bike = getModelByName("bike");
+
+  return Bike.searchBike(req.params.term)
+    .then((bikes) => {
+      res
+        .status(200)
+        .send({ success: true, message: "bikes found", data: bikes });
+    })
+    .catch((err) => next(createError(500, err.message)));
+};
+module.exports.getBikes = (req, res, next) => {
+  const Bike = getModelByName("bike");
+
+  return Bike.getBikes().then((bikes) => {
+    res.status(200).send({
+      success: true,
+      message: "bikes recieved successfully",
+      data: bikes,
+    });
+  });
+};
+module.exports.departmentResposible = (req, res, next) => {
+  const Bike = getModelByName("bike");
+
+  return Bike.departmentResposible(req.params.term)
+    .then((bikes) => {
+      return bikes.map((bike) => {
+        if (bike.case && bike.case.assignedOfficer) {
+          const { brand, model, license, color, type, desc, owner } = bike;
+
+          const PoliceOfficer = getModelByName("policeOfficer");
+          return PoliceOfficer.findById(bike.case.assignedOfficer)
+            .populate("department")
+            .then((policeOfficer) => {
+              const { name, city } = policeOfficer.department;
+              return {
+                bike: {
+                  ID: bike._id,
+                  brand,
+                  model,
+                  license,
+                  color,
+                  type,
+                  desc,
+                  owner,
+                },
+                department: { ID: policeOfficer.department._id, name, city },
+              };
+            });
+        }
+      });
+    })
+    .then((bikes) => {
+      return Promise.all(bikes);
+    })
+    .then((bikes) => {
+      // console.log("bikes", bikes);
+      res
+        .status(200)
+        .send({ success: true, message: "data received", data: bikes });
     })
     .catch((err) => next(createError(500, err.message)));
 };

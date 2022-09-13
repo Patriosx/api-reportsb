@@ -1,21 +1,31 @@
-### get users
-GET http://localhost:5000/police/officers
+### get police
+GET http://localhost:5000/police/
 
 ### get free agents
 GET http://localhost:5000/police/free_agents
+
+### get bikes
+GET http://localhost:5000/police/get_bikes
 
 ### register police officer
 POST http://localhost:5000/auth/police/signup/ HTTP/1.1
 Content-Type: application/json
 
 {
-    "email": "police2@police.com",
+    "email": "police@police.com",
     "fullname": "Marco Pin",
     "phone":"928 654 130",
     "password": "password",
     "address": "calle falsa 127"
 }
+### login
+POST http://localhost:5000/auth/police/login/ HTTP/1.1
+Content-Type: application/json
 
+{
+    "email": "police@police.com",
+    "password": "password"
+}
 ### release police from case
 POST http://localhost:5000/police/release/ HTTP/1.1
 Content-Type: application/json
@@ -23,3 +33,6 @@ Content-Type: application/json
 {
     "policeOfficerId": "6315f5d97e1a85b48ceece05"
 }
+
+### get bikes by characteristics and ther department responsible
+GET http://localhost:5000/police/x

@@ -26,5 +26,30 @@ const verifyUser = (req, res, next) => {
     }
   });
 };
-module.exports = { verifyTokenWCookie, verifyUser };
-// module.exports = verifyUser;
+const verifyAdmin = (req, res, next) => {
+  verifyTokenWCookie(req, res, next, () => {
+    console.log(req.params.id);
+    console.log("req.user", req.user);
+
+    //comprueba que sea tu cuenta o que sea admin
+    if (req.user.isAdmin) {
+      next(); //avanza al siguiente middleware
+    } else {
+      return next(createError(403, "not admin"));
+    }
+  });
+};
+const verifyPolice = (req, res, next) => {
+  verifyTokenWCookie(req, res, next, () => {
+    console.log(req.params.id);
+    console.log("req.user", req.user);
+
+    //check if contain the key/prop department
+    if ("department" in req.user) {
+      next(); //avanza al siguiente middleware
+    } else {
+      return next(createError(403, "not Police"));
+    }
+  });
+};
+module.exports = { verifyTokenWCookie, verifyUser, verifyAdmin, verifyPolice };

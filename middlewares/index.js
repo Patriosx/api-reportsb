@@ -1,4 +1,15 @@
 const auth = require("./auth");
-const { verifyTokenWCookie, verifyUser } = require("./verifyToken");
+const {
+  verifyTokenWCookie,
+  verifyUser,
+  verifyAdmin,
+  verifyPolice,
+} = require("./verifyToken");
 
-module.exports = { auth, verifyTokenWCookie, verifyUser };
+module.exports = {
+  auth,
+  verifyTokenWCookie,
+  verifyUser,
+  verifyAdmin,
+  verifyPolice,
+};

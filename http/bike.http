@@ -1,19 +1,23 @@
-### get users
-GET http://localhost:5000/account/users/
+### get bikes
+GET http://localhost:5000/police/get_bikes
 
 ### add stolen bike
 POST http://localhost:5000/case/stolen_bike/ HTTP/1.1
 Content-Type: application/json
 
 {
-    "brand": "marca",
-    "model": "modelo x",
-    "license":"XL-5200",
-    "color": "Yellow and blue",
-    "type": "classic",
-    "desc": "the front tire is white",
-    "owner": "6318ab26e7acbe19e2e9a302"
+    "brand": "Fox",
+    "model": "Foxy 90",
+    "license":"ff-1010",
+    "color": "yellow",
+    "type": "Mountainbike",
+    "desc": "brakes color blue",
+    "owner": "631f29d7824cbf68693bcdec"
 }
 
 ### get bike back
 GET http://localhost:5000/case/recovery_bike/6318ab36e7acbe19e2e9a305
+
+### search by differente characteristics
+GET http://localhost:5000/police/search/x
+

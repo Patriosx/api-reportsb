@@ -97,3 +97,12 @@ module.exports.deleteAccount = (req, res, next) => {
     })
     .catch((err) => next(createError(500, err.message)));
 };
+module.exports.getBikesByUser = (req, res, next) => {
+  const User = getModelByName("user");
+
+  return User.getBikesByUser(req.params.id)
+    .then((data) => {
+      res.status(200).send({ success: true, data });
+    })
+    .catch((err) => next(createError(500, err.message)));
+};

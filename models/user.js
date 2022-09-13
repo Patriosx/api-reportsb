@@ -42,6 +42,7 @@ UserSchema.statics.confirmAccount = confirmAccount;
 UserSchema.statics.updateUser = updateUser;
 UserSchema.statics.updatePassword = updatePassword;
 UserSchema.statics.deleteAccount = deleteAccount;
+UserSchema.statics.getBikesByUser = getBikesByUser;
 
 //(modelo, esquema, tabla)
 module.exports = mongoose.model("user", UserSchema, "users");
@@ -77,6 +78,7 @@ function updateUser(userId, body) {
     (user) => user
   );
 }
+//user need to confirm account to be able to login
 function sendConfirmationAccount(user) {
   let transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
@@ -87,28 +89,31 @@ function sendConfirmationAccount(user) {
       pass: process.env.SMTP_KEY,
     },
   });
-  //creamos token para enviar el email dentro
+  //create a token to send the email inside
   const token = jwt.sign({ email: user.email }, process.env.SECRET_TOKEN);
   const urlConfirmation = `${process.env.API_GATEWAY_URL}/account/confirm/${token}`;
 
-  //verificar transporter
-  return transporter.sendMail({
+  //verify transporter
+  transporter.sendMail({
     from: process.env.MAIL_ADMIN,
     to: user.email,
     subject: "Please confirm your email.",
     html: `<p>Confirm your email <a href="${urlConfirmation}">here<a/></p>`,
   });
+  return user;
 }
 function confirmAccount(token) {
   let email = null;
 
   try {
+    //verify token with the email inside
     const payload = jwt.verify(token, process.env.SECRET_TOKEN);
     email = payload.email;
   } catch (error) {
     throw new Error("invalid token");
   }
 
+  //search the user by email received inside the token
   return this.findOne({ email }).then((user) => {
     if (!user) throw new Error("user not found");
     if (user.emailVerified) throw new Error("user already verified");
@@ -135,12 +140,12 @@ function login(emailInput, passwordInput) {
   if (!isValidEmail(emailInput)) throw new Error("email not valid");
 
   return this.findOne({ emailInput }).then((user) => {
-    //validar email
+    //input validations
     if (!user) throw new Error("incorrect credentials");
     if (!user.emailVerified) throw new Error("account not verified");
 
-    //compara la contraseña:
-    //el password entregado por el usuario con el password correspondiente al email que tenemos en la base de datos
+    //compare password:
+    //the password given by the user with the password corresponding to the email we have in the database
     const isPasswordCorrect = bcrypt.compareSync(passwordInput, user.password);
     if (!isPasswordCorrect) throw new Error("incorrect credentials");
     const userObj = {
@@ -149,16 +154,16 @@ function login(emailInput, passwordInput) {
       username: user.username,
       isAdmin: user.isAdmin,
     };
-    // const { password, isAdmin, ...otherDetails } = user._doc;//lo mismo que userObj
+    // const { password, isAdmin, ...otherDetails } = user._doc;//same as userObj
 
-    //creamos un token jwt, que lleva el objeto con los datos del usuario firmado con una clave secreta
+    //create a token jwt, object with the user data signed with a secret key
     const access_token = jwt.sign(
       Object.assign({}, userObj),
       process.env.SECRET_TOKEN,
-      { expiresIn: 60 * 60 * 4 } //definido en segundos (4 horas)
+      { expiresIn: 60 * 60 * 4 } //defined in seconds (4 hours)
     );
 
-    //devolvemos token jwt firmado
+    //return token jwt signed
     return { access_token };
   });
 }
@@ -173,4 +178,7 @@ function updatePassword(userId, oldPassword, newPassword) {
 }
 function deleteAccount(userId) {
   return this.findByIdAndDelete(userId).then((user) => user);
+}
+function getBikesByUser(userId) {
+  return this.findById(userId).populate("stolenBikes");
 }

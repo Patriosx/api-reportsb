@@ -30,10 +30,17 @@ module.exports.signup = (req, res, next) => {
   const User = getModelByName("user");
 
   return User.signup(body)
-    .then(() => {
-      res
-        .status(201)
-        .send({ success: true, message: "successfully signed up" });
+    .then((user) => {
+      console.log(user);
+      const userData = {
+        id: user._id,
+        username: user.fullname,
+      };
+      res.status(201).send({
+        success: true,
+        message: "successfully signed up",
+        data: userData,
+      });
     })
     .catch((err) => next(createError(500, err.message)));
 };
@@ -66,10 +73,10 @@ module.exports.signupPolice = (req, res, next) => {
 
   const Police = getModelByName("policeOfficer");
   return Police.signup(body)
-    .then(() => {
+    .then((data) => {
       res
         .status(201)
-        .send({ success: true, message: "successfully signed up" });
+        .send({ success: true, message: "successfully signed up", data });
     })
     .catch((err) => next(createError(500, err.message)));
 };

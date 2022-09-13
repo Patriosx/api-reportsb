@@ -15,8 +15,8 @@ POST http://localhost:5000/case/new_case HTTP/1.1
 Content-Type: application/json
 
 {
-    "stolenBike":"6318ac785344143ce3b16139",
-    "descriptionTheft": "I left my bike in the parking bike of San telmo",
+    "stolenBike":"631f322a7f6fdac20cc703fc",
+    "descriptionTheft": "I left my bike in the bike parking of San telmo",
     "locationTheft": {"lat":20.55, "lng":-55.96},
     "dateTheft":"06/09/2022"
 }

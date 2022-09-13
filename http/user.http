@@ -1,7 +1,10 @@
 ### get users
 GET http://localhost:5000/account/users/
 
-### Crear un usuario
+### get bikes of a user
+GET http://localhost:5000/account/users/bikes/6318ab26e7acbe19e2e9a302
+
+### register new user
 POST http://localhost:5000/auth/signup/ HTTP/1.1
 Content-Type: application/json
 
@@ -12,4 +15,13 @@ Content-Type: application/json
     "password": "password",
     "currentLocation": {"lat":20.55, "lng":-55.96},
     "address": "mi casa"
+}
+
+### login
+POST http://localhost:5000/auth/login/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "email": "patriosweb@gmail.com",
+    "password": "password"
 }

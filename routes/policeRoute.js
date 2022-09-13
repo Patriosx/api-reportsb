@@ -1,11 +1,19 @@
 const express = require("express");
 const policeCtrl = require("../controllers/policeControllers");
-
+const bikeCtrl = require("../controllers/bikeControllers");
+const { verifyAdmin, verifyUser, verifyPolice } = require("../middlewares");
 const router = express.Router();
 
-router.get("/", policeCtrl.getPolice);
-router.post("/officer", policeCtrl.getPoliceOfficerById);
+//Police actions
+router.get("/", verifyAdmin, policeCtrl.getPolice);
+router.post("/officer", verifyAdmin, policeCtrl.getPoliceOfficerById);
 router.get("/free_agents", policeCtrl.searchFreeAgent);
 router.post("/release", policeCtrl.releasePoliceOfficerFromCase);
+
+//Police actions with bikes
+router.get("/search/:term", verifyPolice, bikeCtrl.searchBike);
+router.get("/get_bikes", verifyPolice, bikeCtrl.getBikes);
+
+router.get("/:term", bikeCtrl.departmentResposible);
 
 module.exports = router;

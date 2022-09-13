@@ -149,6 +149,7 @@ function login(emailInput, passwordInput) {
       email: policeOfficer.email,
       policename: policeOfficer.policename,
       isAdmin: policeOfficer.isAdmin,
+      department: policeOfficer.department,
     };
     // const { password, isAdmin, ...otherDetails } = policeOfficer._doc;//lo mismo que policeObj
 
