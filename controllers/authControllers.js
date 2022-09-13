@@ -31,7 +31,6 @@ module.exports.signup = (req, res, next) => {
 
   return User.signup(body)
     .then((user) => {
-      console.log(user);
       const userData = {
         id: user._id,
         username: user.fullname,

@@ -43,6 +43,8 @@ npm run dev
 
 ## Usage with REST Client extension (http folder)
 
+\*For user currentLocation, It will be given by Geolocation API thorugh the frontend
+
 1. Register user:
    POST http://localhost:5000/auth/signup/ HTTP/1.1
    Content-Type: application/json
@@ -94,4 +96,8 @@ npm run dev
 "dateTheft":"06/09/2022"
 }
 
-7. You will be notify by email if there is a police officer free to atend your case
+\*locationTheft, It will be given by Google Geocoding API
+
+7. You will be notify by email if there is a police officer free to atend your case.
+
+8. You will be notified when the case is solved.

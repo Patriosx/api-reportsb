@@ -84,7 +84,6 @@ function removePoliceOfficer(policeOfficerId) {
           policeOfficer.department = null;
           policeOfficer.save({ session });
           session.commitTransaction();
-          console.log("removed");
         })
         .then(() => session.endSession())
         .catch(() => session.abortTransaction());

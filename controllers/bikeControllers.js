@@ -1,6 +1,7 @@
 const getModelByName = require("../db/getModelByName");
 const { createError } = require("../helpers");
 
+//user report a stolen bike
 module.exports.addStolenBike = (req, res, next) => {
   const { body } = req;
   if (!body) return next(createError(500, "bike info not found"));
@@ -31,6 +32,7 @@ module.exports.removeStolenBike = (req, res, next) => {
     })
     .catch((err) => next(createError(500, err.message)));
 };
+//search bikes filtered a term
 module.exports.searchBike = (req, res, next) => {
   const Bike = getModelByName("bike");
 
@@ -53,6 +55,7 @@ module.exports.getBikes = (req, res, next) => {
     });
   });
 };
+//return ths bike and the department responsible for the case
 module.exports.departmentResposible = (req, res, next) => {
   const Bike = getModelByName("bike");
 
@@ -88,7 +91,6 @@ module.exports.departmentResposible = (req, res, next) => {
       return Promise.all(bikes);
     })
     .then((bikes) => {
-      // console.log("bikes", bikes);
       res
         .status(200)
         .send({ success: true, message: "data received", data: bikes });

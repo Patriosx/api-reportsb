@@ -25,3 +25,12 @@ Content-Type: application/json
     "email": "patriosweb@gmail.com",
     "password": "password"
 }
+
+### update password
+PATCH http://localhost:5000/account/change-password/631f29d7824cbf68693bcdec HTTP/1.1
+Content-Type: application/json
+
+{
+    "oldPassword": "password",
+    "newPassword": "pass"
+}

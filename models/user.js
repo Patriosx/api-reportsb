@@ -44,7 +44,7 @@ UserSchema.statics.updatePassword = updatePassword;
 UserSchema.statics.deleteAccount = deleteAccount;
 UserSchema.statics.getBikesByUser = getBikesByUser;
 
-//(modelo, esquema, tabla)
+//(model, schema, table)
 module.exports = mongoose.model("user", UserSchema, "users");
 
 //Static methods
@@ -123,7 +123,7 @@ function confirmAccount(token) {
   });
 }
 function getUsers() {
-  return this.find().then((users) => users);
+  return this.find();
 }
 function getUserById(_id) {
   return this.findById(_id).then((user) => {
@@ -136,7 +136,7 @@ function getUserById(_id) {
   });
 }
 function login(emailInput, passwordInput) {
-  //comprueba el formato del email
+  //check email format
   if (!isValidEmail(emailInput)) throw new Error("email not valid");
 
   return this.findOne({ emailInput }).then((user) => {
