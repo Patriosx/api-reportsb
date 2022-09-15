@@ -22,7 +22,7 @@ const UserSchema = mongoose.Schema(
     currentLocation: { type: Object },
     address: { type: String },
     emailVerified: { type: Boolean, default: false },
-    isAdmin: { type: Boolean, default: false },
+    // isAdmin: { type: Boolean, default: false },
     stolenBikes: [
       {
         type: mongoose.Types.ObjectId,
@@ -53,6 +53,7 @@ function signup(userInfo) {
   if (!userInfo.email || !isValidEmail(userInfo.email))
     throw new Error("Email is not valid");
   if (!userInfo.fullname) throw new Error("name is required");
+  if (!userInfo.phone) throw new Error("phone is required");
   if (!userInfo.password) throw new Error("password is required");
 
   return this.findOne({ email: userInfo.email })
@@ -125,14 +126,14 @@ function confirmAccount(token) {
 function getUsers() {
   return this.find();
 }
-function getUserById(_id) {
-  return this.findById(_id).then((user) => {
+function getUserById(id) {
+  return this.findById(id).then((user) => {
     if (!user) throw new Error("user not found");
     return {
-      _id: user._id,
+      id: user.id,
       email: user.email,
       emailVerified: user.emailVerified,
-      isAdmin: user.isAdmin,
+      // isAdmin: user.isAdmin,
     };
   });
 }
@@ -142,7 +143,7 @@ function login(emailInput, passwordInput) {
 
   return this.findOne({ email: emailInput }).then((user) => {
     //input validations
-    if (!user) throw new Error("incorrect credentials");
+    if (!user) throw new Error("user not found");
     if (!user.emailVerified) throw new Error("account not verified");
 
     //compare password:
@@ -150,7 +151,7 @@ function login(emailInput, passwordInput) {
     const isPasswordCorrect = bcrypt.compareSync(passwordInput, user.password);
     if (!isPasswordCorrect) throw new Error("incorrect credentials");
     const userObj = {
-      _id: user._id,
+      id: user._id,
       email: user.email,
       username: user.username,
       isAdmin: user.isAdmin,
@@ -170,15 +171,19 @@ function login(emailInput, passwordInput) {
 }
 function updatePassword(userId, oldPassword, newPassword) {
   return this.findById(userId).then((user) => {
+    if (!user) throw new Error("user not found");
     const isPasswordCorrect = bcrypt.compareSync(oldPassword, user.password);
     if (!isPasswordCorrect) throw new Error("incorrect credentials");
 
     user.password = bcrypt.hashSync(newPassword);
-    user.save();
+    return user.save();
   });
 }
 function deleteAccount(userId) {
-  return this.findByIdAndDelete(userId).then((user) => user);
+  return this.findByIdAndDelete(userId).then((user) => {
+    if (!user) throw new Error("user not found");
+    return user;
+  });
 }
 function getBikesByUser(userId) {
   return this.findById(userId)

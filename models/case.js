@@ -97,10 +97,11 @@ function solveCase(caseId) {
   });
 }
 //get cases by user
-async function getCasesByUser(userId) {
-  return await User.findById(userId)
+function getCasesByUser(userId) {
+  return User.findById(userId)
     .populate("stolenBikes")
     .then((user) => {
+      if (!user) throw new Error("user not found");
       return user.stolenBikes.map((bike) => bike.case);
     });
 }

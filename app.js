@@ -1,5 +1,5 @@
 const express = require("express");
-const db_connection = require("./db/db_connection");
+const mongoConnect = require("./db/dbConnection");
 const { router } = require("./router");
 const { config } = require("./config");
 const app = express();
@@ -25,7 +25,6 @@ app.use((err, req, res, next) => {
 
 //* Run server *//
 app.listen(process.env.PORT || 5000, () => {
-  //* MongoDB connection *//
-  db_connection();
+  mongoConnect();
   console.log("Listening ");
 });

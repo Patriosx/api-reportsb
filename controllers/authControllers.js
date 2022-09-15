@@ -1,5 +1,5 @@
 const getModelByName = require("../db/getModelByName");
-const { createError } = require("../helpers");
+const { createError, successResponse } = require("../helpers");
 
 //Users
 module.exports.login = (req, res, next) => {
@@ -22,10 +22,11 @@ module.exports.login = (req, res, next) => {
 };
 module.exports.signup = (req, res, next) => {
   const { body } = req;
-  if (!body)
-    return res
-      .status(200)
-      .send({ success: false, error: "user info not found" });
+  //validations
+  if (!body.email) return next(createError(500, "email not provided"));
+  if (!body.fullname) return next(createError(500, "name not provided"));
+  if (!body.phone) return next(createError(500, "phone not provided"));
+  if (!body.password) return next(createError(500, "password not provided"));
 
   const User = getModelByName("user");
 
@@ -35,11 +36,7 @@ module.exports.signup = (req, res, next) => {
         id: user._id,
         username: user.fullname,
       };
-      res.status(201).send({
-        success: true,
-        message: "successfully signed up",
-        data: userData,
-      });
+      successResponse(res, 201, "successfully signed up", userData);
     })
     .catch((err) => next(createError(500, err.message)));
 };
@@ -73,9 +70,7 @@ module.exports.signupPolice = (req, res, next) => {
   const Police = getModelByName("policeOfficer");
   return Police.signup(body)
     .then((data) => {
-      res
-        .status(201)
-        .send({ success: true, message: "successfully signed up", data });
+      successResponse(res, 201, "successfully signed up", data);
     })
     .catch((err) => next(createError(500, err.message)));
 };

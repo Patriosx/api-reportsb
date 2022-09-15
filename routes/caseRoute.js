@@ -7,7 +7,7 @@ const caseCtrol = require("../controllers/caseControllers");
 const { verifyAdmin, verifyUser } = require("../middlewares");
 const router = express.Router();
 
-router.post("/stolen_bike", verifyUser, addStolenBike);
+router.post("/stolen_bike/:id", verifyUser, addStolenBike);
 router.get("/recovery_bike/:id", removeStolenBike);
 
 router.post("/new_case", verifyUser, caseCtrol.openNewCase);

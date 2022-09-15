@@ -1,6 +1,9 @@
 ### get users
 GET http://localhost:5000/account/users/
 
+### get user
+GET http://localhost:5000/account/632368577c96b3376e371e78/
+
 ### get bikes of a user
 GET http://localhost:5000/account/users/bikes/6318ab26e7acbe19e2e9a302
 

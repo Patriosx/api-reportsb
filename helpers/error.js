@@ -1,3 +1,4 @@
+//status = HTTP response status codes
 const createError = (status, message, data = null) => {
   const err = new Error();
   err.status = status;

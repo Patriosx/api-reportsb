@@ -12,7 +12,7 @@ Content-Type: application/json
     "color": "yellow",
     "type": "Mountainbike",
     "desc": "brakes color blue",
-    "owner": "631f29d7824cbf68693bcdec"
+    "owner": "63235651f65526f8278c69bb"
 }
 
 ### get bike back

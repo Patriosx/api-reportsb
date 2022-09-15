@@ -1,11 +1,9 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
 const express = require("express");
-const app = express();
 const URI = process.env.MONGO_DB_URI;
-const PORT = process.env.PORT;
 // Conexión a la base de datos (MongoDB Atlas) y arrancar el servidor (Express)
-const db_connection = () => {
+const mongoConnect = () => {
   mongoose.connection.on("disconnected", () => {
     console.log("mongoDB disconnected!");
   });
@@ -16,4 +14,4 @@ const db_connection = () => {
     })
     .catch((error) => console.log("connection error", error));
 };
-module.exports = db_connection;
+module.exports = mongoConnect;

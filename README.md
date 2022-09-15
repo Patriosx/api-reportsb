@@ -21,7 +21,9 @@ As user you can:
 <li>Report stolen bike</li>
 </ol>
 
-## How To Use
+Production: https://api-rsb.herokuapp.com/
+
+## How To Use in local
 
 1. Clone the repo
 

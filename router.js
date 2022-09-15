@@ -5,10 +5,10 @@ const policeRoute = require("./routes/policeRoute");
 const departmentRoute = require("./routes/departmentRoute");
 
 module.exports.router = (app) => {
-  app.use("/account", userRoute);
   app.use("/auth", authRoute);
-  app.use("/case", caseRoute);
+  app.use("/account", userRoute);
   app.use("/police", policeRoute);
+  app.use("/case", caseRoute);
   app.use("/department", departmentRoute);
   app.use((req, res, next) => {
     res.status(404);

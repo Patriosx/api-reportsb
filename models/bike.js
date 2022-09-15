@@ -78,20 +78,21 @@ function removeStolenBike(bikeId) {
           });
           session.commitTransaction();
         })
-        .catch((err) => session.abortTransaction());
+        .catch(() => session.abortTransaction());
     });
 }
 //add caseID to bike
 function addCaseToBike(bikeId, caseId) {
   return this.findById(bikeId).then((bike) => {
+    if (!bike) throw new Error("bike not found");
     bike.case = caseId;
     bike.save();
   });
 }
 //search bikes by different characteristics
-async function searchBike(searchTerm) {
+function searchBike(searchTerm) {
   const reg = { $regex: searchTerm, $options: "i" }; // $options: "i" case sensitive
-  return await this.find({
+  return this.find({
     $or: [
       { brand: reg },
       { model: reg },
@@ -103,9 +104,9 @@ async function searchBike(searchTerm) {
   });
 }
 //search bikes by different characteristics and populate cases to reach the department
-async function departmentResposible(searchTerm) {
+function departmentResposible(searchTerm) {
   const reg = { $regex: searchTerm, $options: "i" }; // $options: "i" case sensitive
-  return await this.find({
+  return this.find({
     $or: [
       { brand: reg },
       { model: reg },
@@ -116,7 +117,6 @@ async function departmentResposible(searchTerm) {
     ],
   }).populate("case");
 }
-
 function getBikes() {
   return this.find();
 }
