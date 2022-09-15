@@ -127,6 +127,7 @@ function getUsers() {
 }
 function getUserById(_id) {
   return this.findById(_id).then((user) => {
+    if (!user) throw new Error("user not found");
     return {
       _id: user._id,
       email: user.email,
@@ -139,7 +140,7 @@ function login(emailInput, passwordInput) {
   //check email format
   if (!isValidEmail(emailInput)) throw new Error("email not valid");
 
-  return this.findOne({ emailInput }).then((user) => {
+  return this.findOne({ email: emailInput }).then((user) => {
     //input validations
     if (!user) throw new Error("incorrect credentials");
     if (!user.emailVerified) throw new Error("account not verified");
@@ -180,5 +181,10 @@ function deleteAccount(userId) {
   return this.findByIdAndDelete(userId).then((user) => user);
 }
 function getBikesByUser(userId) {
-  return this.findById(userId).populate("stolenBikes");
+  return this.findById(userId)
+    .populate("stolenBikes")
+    .then((user) => {
+      if (!user) throw new Error("user not found");
+      return user;
+    });
 }

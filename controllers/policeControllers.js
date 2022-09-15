@@ -14,18 +14,12 @@ module.exports.getPolice = (req, res, next) => {
 
 module.exports.getPoliceOfficerById = (req, res, next) => {
   const { body } = req;
-  if (!body)
-    return res.status(200).send({
-      success: false,
-      error: "policeOfficer info not found",
-      data: { policeOfficer: null },
-    });
 
   const Police = getModelByName("policeOfficer");
 
   return Police.getPoliceOfficerById(body.id)
     .then((policeOfficer) => {
-      res.status(200).send({ success: true, data: { policeOfficer } });
+      res.status(200).send({ success: true, data: policeOfficer });
     })
     .catch((err) => next(createError(500, err.message)));
 };

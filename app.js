@@ -1,34 +1,16 @@
 const express = require("express");
-const bodyParser = require("body-parser");
 const db_connection = require("./db/db_connection");
-const userRoute = require("./routes/userRoute");
-const authRoute = require("./routes/authRoute");
-const caseRoute = require("./routes/caseRoute");
-const policeRoute = require("./routes/policeRoute");
-const departmentRoute = require("./routes/departmentRoute");
+const { router } = require("./router");
+const { config } = require("./config");
 const app = express();
-const cookieParser = require("cookie-parser");
 
 //* Setup middlewares*//
-//will help us to retrieve body parameters when handling a request.
-// app.use(bodyParser.json());
-app.use(express.json());
-app.use(cookieParser());
+config(app);
 
-//* Routes *//
-app.use("/account", userRoute);
-app.use("/auth", authRoute);
-app.use("/case", caseRoute);
-app.use("/police", policeRoute);
-app.use("/department", departmentRoute);
-app.use((req, res, next) => {
-  res.status(404);
-  res.json({
-    message: "Route not found",
-  });
-});
+//* routes *//
+router(app);
 
-//* Error handler
+//* Error handler *//
 app.use((err, req, res, next) => {
   const errorStatus = err.status || 500;
   const errorMessage = err.message || "Something went wrong!";
@@ -41,7 +23,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-//* Se usa para vincular y escuchar las conecciones en un puerto*//
+//* Run server *//
 app.listen(process.env.PORT || 5000, () => {
   //* MongoDB connection *//
   db_connection();

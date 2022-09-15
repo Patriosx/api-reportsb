@@ -41,6 +41,8 @@ npm install
 npm run dev
 ```
 
+4. If everthing is correct, you will see the messages Listening and then BD connected
+
 ## Usage with REST Client extension (http folder)
 
 \*For user currentLocation, It will be given by Geolocation API thorugh the frontend

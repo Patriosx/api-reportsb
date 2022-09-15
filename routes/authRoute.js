@@ -7,10 +7,11 @@ const {
 } = require("../controllers/authControllers");
 
 const router = express.Router();
-
+//User authentication
 router.post("/login", login);
 router.post("/signup", signup);
 
+//Police authentication
 router.post("/police/login", loginPolice);
 router.post("/police/signup", signupPolice);
 

@@ -126,13 +126,17 @@ function getPolice() {
   return this.find().then((policeOfficers) => policeOfficers);
 }
 function getPoliceOfficerById(id) {
-  return this.findById(id).then((policeOfficer) => policeOfficer);
+  if (!id) throw new Error("officer Id required");
+  return this.findById(id).then((officer) => {
+    if (!officer) throw new Error("officer not found");
+    return officer;
+  });
 }
 function login(emailInput, passwordInput) {
   //comprueba el formato del email
   if (!isValidEmail(emailInput)) throw new Error("email not valid");
 
-  return this.findOne({ emailInput }).then((policeOfficer) => {
+  return this.findOne({ email: emailInput }).then((policeOfficer) => {
     //validar email
     if (!policeOfficer) throw new Error("incorrect credentials");
     if (!policeOfficer.emailVerified) throw new Error("account not verified");
@@ -147,10 +151,11 @@ function login(emailInput, passwordInput) {
     const policeObj = {
       _id: policeOfficer._id,
       email: policeOfficer.email,
-      policename: policeOfficer.policename,
+      name: policeOfficer.fullname,
       isAdmin: policeOfficer.isAdmin,
       department: policeOfficer.department,
     };
+    console.log(policeObj);
     // const { password, isAdmin, ...otherDetails } = policeOfficer._doc;//lo mismo que policeObj
 
     //creamos un token jwt, que lleva el objeto con los datos del usuario firmado con una clave secreta

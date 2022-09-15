@@ -14,12 +14,6 @@ module.exports.getUsers = (req, res, next) => {
 
 module.exports.getUserById = (req, res, next) => {
   const { body } = req;
-  if (!body)
-    return res.status(200).send({
-      success: false,
-      error: "user info not found",
-      data: { user: null },
-    });
 
   const User = getModelByName("user");
 
