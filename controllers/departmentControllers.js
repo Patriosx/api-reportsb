@@ -1,12 +1,12 @@
 const getModelByName = require("../db/getModelByName");
-const { createError } = require("../helpers");
+const { createError, successResponse } = require("../helpers");
 
 module.exports.addPoliceOfficer = (req, res, next) => {
   const { departmentId, officerId } = req.body;
   const Department = getModelByName("department");
   return Department.addPoliceOfficer(departmentId, officerId)
-    .then(() => {
-      res.status(200).send({ success: true, message: "successfully added" });
+    .then((department) => {
+      successResponse(res, 200, "officer added successfully", department);
     })
     .catch((err) => next(createError(500, err.message)));
 };
@@ -15,11 +15,7 @@ module.exports.createDepartment = (req, res, next) => {
 
   return Department.createDepartment(req.body)
     .then((department) => {
-      res.status(200).send({
-        success: true,
-        message: " department successfully created",
-        data: department,
-      });
+      successResponse(res, 201, "department created successfully", department);
     })
     .catch((err) => next(createError(500, err.message)));
 };
@@ -28,11 +24,12 @@ module.exports.getDepartments = (req, res, next) => {
 
   return Department.getDepartments()
     .then((departments) => {
-      res.status(200).send({
-        success: true,
-        message: "departments received",
-        data: departments,
-      });
+      successResponse(
+        res,
+        200,
+        "departments received successfully",
+        departments
+      );
     })
     .catch((err) => next(createError(500, err.message)));
 };
@@ -42,11 +39,12 @@ module.exports.removePoliceOfficer = (req, res, next) => {
 
   return Department.removePoliceOfficer(policeOfficerId)
     .then((department) => {
-      res.status(200).send({
-        success: true,
-        message: "officer successfully removed from department",
-        data: department,
-      });
+      successResponse(
+        res,
+        200,
+        "officer removed from department successfully",
+        department
+      );
     })
     .catch((err) => next(createError(500, err.message)));
 };
@@ -55,9 +53,7 @@ module.exports.cleanDepartment = (req, res, next) => {
   const { departmentId } = req.body;
   return Department.cleanDepartment(departmentId)
     .then((department) => {
-      res
-        .status(200)
-        .send({ success: true, message: "successfully", data: department });
+      successResponse(res, 200, "department cleaned successfully", department);
     })
     .catch((err) => next(createError(500, err.message)));
 };

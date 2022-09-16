@@ -10,7 +10,7 @@ const mongoConnect = () => {
   mongoose
     .connect(URI)
     .then(() => {
-      console.log("\x1b[36m%s\x1b[0m", "BD connected");
+      console.log("\x1b[36m%s\x1b[0m", "Connected to Database.");
     })
     .catch((error) => console.log("connection error", error));
 };

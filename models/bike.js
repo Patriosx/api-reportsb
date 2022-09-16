@@ -56,10 +56,11 @@ async function addStolenBike(bikeInfo) {
     return session.abortTransaction();
   }
 }
+
 function removeStolenBike(bikeId) {
   return this.findById(bikeId)
     .populate("owner")
-    .then(async (bike) => {
+    .then((bike) => {
       if (!bike) throw new Error("bike not found");
 
       let session = null;

@@ -4,7 +4,7 @@ const { createError, successResponse } = require("../helpers");
 //Users
 module.exports.login = (req, res, next) => {
   const { body } = req;
-  //comprobar parametros
+  //check props. validations
   if (!body.email) return next(createError(500, "email not provided"));
   if (!body.password) return next(createError(500, "password not provided"));
 

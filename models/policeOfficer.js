@@ -49,26 +49,25 @@ function signup(policeOfficerInfo) {
     throw new Error("Email is not valid");
   if (!policeOfficerInfo.fullname) throw new Error("name is required");
   if (!policeOfficerInfo.password) throw new Error("password is required");
+  if (!policeOfficerInfo.address) throw new Error("address is required");
 
-  return (
-    this.findOne({ email: policeOfficerInfo.email })
-      .then((policeOfficer) => {
-        if (policeOfficer) throw new Error("policeOfficer already exists");
+  return this.findOne({ email: policeOfficerInfo.email })
+    .then((policeOfficer) => {
+      if (policeOfficer) throw new Error("policeOfficer already exists");
 
-        const newpolice = {
-          email: policeOfficerInfo.email,
-          fullname: policeOfficerInfo.fullname,
-          password: bcrypt.hashSync(policeOfficerInfo.password),
-          phone: policeOfficerInfo.phone,
-          currentLocation: policeOfficerInfo.currentLocation,
-          address: policeOfficerInfo.address,
-        };
+      const newOfficer = {
+        email: policeOfficerInfo.email,
+        fullname: policeOfficerInfo.fullname,
+        password: bcrypt.hashSync(policeOfficerInfo.password),
+        phone: policeOfficerInfo.phone,
+        currentLocation: policeOfficerInfo.currentLocation,
+        address: policeOfficerInfo.address,
+      };
 
-        return this.create(newpolice);
-      })
-      // .then((policeCreated) => sendConfirmationAccount(policeCreated))
-      .then((policeOfficer) => policeOfficer)
-  );
+      return this.create(newOfficer);
+    })
+    .then((policeCreated) => sendConfirmationAccount(policeCreated))
+    .then((policeOfficer) => policeOfficer);
 }
 function updatePoliceOfficer(policeOfficerId, body) {
   return this.findByIdAndUpdate(
@@ -79,13 +78,12 @@ function updatePoliceOfficer(policeOfficerId, body) {
 }
 function sendConfirmationAccount(policeOfficer) {
   let transporter = nodemailer.createTransport({
-    host: /**/ process.env.SMTP_HOST /**/ /* "smtp.ionos.es"*/,
+    host: process.env.SMTP_HOST,
     port: 587,
-    secure: false, // upgrade later with STARTTLS
+    secure: false,
     auth: {
-      policeOfficer:
-        /**/ process.env.SMTP_police /** "noreply@Movilidadelectrica.club"*/,
-      pass: /**/ process.env.SMTP_KEY /**  "5X8A&DX3kYD$6Yoe4F;dr3"**/,
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_KEY,
     },
   });
   //creamos token para enviar el email dentro
@@ -93,15 +91,16 @@ function sendConfirmationAccount(policeOfficer) {
     { email: policeOfficer.email },
     process.env.SECRET_TOKEN
   );
-  const urlConfirmation = `${process.env.API_GATEWAY_URL}/account/confirm/${token}`;
+  const urlConfirmation = `${process.env.API_GATEWAY_URL}/police/confirm/${token}`;
 
   //verificar transporter
-  return transporter.sendMail({
-    from: /**/ process.env.MAIL_ADMIN /**/ /*"desarrollo@click2luck.com"*/,
+  transporter.sendMail({
+    from: process.env.MAIL_ADMIN,
     to: policeOfficer.email,
     subject: "Please confirm your email.",
     html: `<p>Confirm your email <a href="${urlConfirmation}">here<a/></p>`,
   });
+  return policeOfficer;
 }
 function confirmAccount(token) {
   let email = null;
@@ -123,7 +122,7 @@ function confirmAccount(token) {
   });
 }
 function getPolice() {
-  return this.find().then((policeOfficers) => policeOfficers);
+  return this.find();
 }
 function getPoliceOfficerById(id) {
   if (!id) throw new Error("officer Id required");
@@ -133,16 +132,16 @@ function getPoliceOfficerById(id) {
   });
 }
 function login(emailInput, passwordInput) {
+  if (!emailInput) throw new Error("email is required");
+  if (!passwordInput) throw new Error("password is required");
   //comprueba el formato del email
   if (!isValidEmail(emailInput)) throw new Error("email not valid");
 
   return this.findOne({ email: emailInput }).then((policeOfficer) => {
-    //validar email
+    //validations
     if (!policeOfficer) throw new Error("incorrect credentials");
     if (!policeOfficer.emailVerified) throw new Error("account not verified");
 
-    //compara la contraseña:
-    //el password entregado por el usuario con el password correspondiente al email que tenemos en la base de datos
     const isPasswordCorrect = bcrypt.compareSync(
       passwordInput,
       policeOfficer.password
@@ -155,22 +154,20 @@ function login(emailInput, passwordInput) {
       isAdmin: policeOfficer.isAdmin,
       department: policeOfficer.department,
     };
-    console.log(policeObj);
-    // const { password, isAdmin, ...otherDetails } = policeOfficer._doc;//lo mismo que policeObj
 
-    //creamos un token jwt, que lleva el objeto con los datos del usuario firmado con una clave secreta
     const access_token = jwt.sign(
       Object.assign({}, policeObj),
       process.env.SECRET_TOKEN,
-      { expiresIn: 60 * 60 * 4 } //definido en segundos (4 horas)
+      { expiresIn: 60 * 60 * 4 }
     );
 
-    //devolvemos token jwt firmado
+    //return token signed with a secret key
     return { access_token };
   });
 }
 function updatePassword(policeOfficerId, oldPassword, newPassword) {
   return this.findById(policeOfficerId).then((policeOfficer) => {
+    if (!policeOfficer) throw new Error("officer not found");
     const isPasswordCorrect = bcrypt.compareSync(
       oldPassword,
       policeOfficer.password
@@ -182,9 +179,10 @@ function updatePassword(policeOfficerId, oldPassword, newPassword) {
   });
 }
 function deleteAccount(policeOfficerId) {
-  return this.findByIdAndDelete(policeOfficerId).then(
-    (policeOfficer) => policeOfficer
-  );
+  return this.findByIdAndDelete(policeOfficerId).then((policeOfficer) => {
+    if (!policeOfficer) throw new Error("officer not found");
+    return policeOfficer;
+  });
 }
 function searchFreeAgent() {
   return this.find({ free: { $eq: true } });
@@ -192,7 +190,7 @@ function searchFreeAgent() {
 function releasePoliceOfficerFromCase(policeOfficerId) {
   if (!policeOfficerId) throw new Error("policeOfficerId required");
   return this.getPoliceOfficerById(policeOfficerId).then((policeOfficer) => {
-    if (!policeOfficer) return next(createError(500, "police not found"));
+    if (!policeOfficer) throw new Error("officer not found");
     policeOfficer.free = true;
     return policeOfficer.save();
   });
@@ -200,7 +198,8 @@ function releasePoliceOfficerFromCase(policeOfficerId) {
 function givePoliceOfficerToCase(policeOfficerId) {
   if (!policeOfficerId) throw new Error("policeOfficer Id required");
   return this.getPoliceOfficerById(policeOfficerId).then((policeOfficer) => {
-    if (!policeOfficer) return next(createError(500, "police not found"));
+    if (!policeOfficer) throw new Error("officer not found");
+
     policeOfficer.free = false;
     return policeOfficer.save();
   });

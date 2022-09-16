@@ -1,5 +1,5 @@
 const getModelByName = require("../db/getModelByName");
-const { createError } = require("../helpers");
+const { createError, successResponse } = require("../helpers");
 const mongoose = require("mongoose");
 module.exports.test = (req, res, next) => {
   const Case = getModelByName("case");
@@ -45,9 +45,7 @@ module.exports.openNewCase = (req, res, next) => {
           });
         })
         .then((data) =>
-          res
-            .status(201)
-            .send({ success: true, message: "case open successfully", data })
+          successResponse(res, 201, "case open successfully", data)
         )
         .catch((err) => next(createError(500, err)));
     } else {
@@ -82,9 +80,7 @@ module.exports.openNewCase = (req, res, next) => {
           });
         })
         .then((data) =>
-          res
-            .status(201)
-            .send({ success: true, message: "case open successfully", data })
+          successResponse(res, 201, "case open successfully", data)
         )
         .catch((err) => next(createError(500, err)));
     }
@@ -95,9 +91,7 @@ module.exports.getCases = (req, res, next) => {
 
   return Case.getCases()
     .then((data) =>
-      res
-        .status(200)
-        .send({ success: true, message: "cases recieved successfully", data })
+      successResponse(res, 200, "case recieved successfully", data)
     )
     .catch(() => next(createError(500, "failed to get cases")));
 };
@@ -135,7 +129,7 @@ module.exports.solveCase = (req, res, next) => {
         });
       });
     })
-    .then(() => res.status(200).send({ success: true, message: "case solved" }))
+    .then(() => successResponse(res, 200, "case solved"))
     .catch((err) => next(createError(500, err)));
 };
 module.exports.getCaseById = (req, res, next) => {
@@ -143,9 +137,7 @@ module.exports.getCaseById = (req, res, next) => {
 
   return Case.getCaseById(req.params.id)
     .then((caseData) => {
-      res
-        .status(200)
-        .send({ success: true, message: "case recieved", data: caseData });
+      successResponse(res, 200, "case recieved", caseData);
     })
     .catch((err) => next(createError(500, err.message)));
 };
@@ -153,11 +145,7 @@ module.exports.getCasesByUser = (req, res, next) => {
   const Case = getModelByName("case");
   return Case.getCasesByUser(req.params.id)
     .then((caseData) => {
-      res.status(200).send({
-        success: true,
-        message: "case recieved successfully",
-        data: caseData,
-      });
+      successResponse(res, 200, "case recieved successfully", caseData);
     })
     .catch((err) => next(createError(500, err.message)));
 };

@@ -19,7 +19,7 @@ const CaseSchema = mongoose.Schema(
     descriptionTheft: { type: String, required: true },
     dateTheft: { type: Date },
     locationTheft: { type: Object, required: true },
-    resolved: { type: Boolean, default: false },
+    solved: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
@@ -91,7 +91,7 @@ function solveCase(caseId) {
   if (!caseId) throw new Error("case ID required");
   //case solved
   return this.findById(caseId).then((caseData) => {
-    caseData.resolved = true;
+    caseData.solved = true;
     caseData.active = false;
     return caseData.save();
   });
@@ -107,7 +107,7 @@ function getCasesByUser(userId) {
 }
 function searchPendingCase() {
   return this.find({
-    $and: [{ active: { $eq: false } }, { resolved: { $eq: false } }],
+    $and: [{ active: { $eq: false } }, { solved: { $eq: false } }],
   });
 }
 function addPoliceOfficerToCase(policeOfficerId, caseId) {

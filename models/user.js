@@ -139,6 +139,8 @@ function getUserById(id) {
 }
 function login(emailInput, passwordInput) {
   //check email format
+  if (!emailInput) throw new Error("email is required");
+  if (!passwordInput) throw new Error("password is required");
   if (!isValidEmail(emailInput)) throw new Error("email not valid");
 
   return this.findOne({ email: emailInput }).then((user) => {

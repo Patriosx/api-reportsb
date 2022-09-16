@@ -15,7 +15,7 @@ const verifyTokenWCookie = (req, res, next) => {
 };
 
 const verifyUser = (req, res, next) => {
-  verifyTokenWCookie(req, res, () => {
+  verifyTokenWCookie(req, res, next, () => {
     console.log("verifyUser", req.params.id, req.user);
     //check if the account is correspond with the current user(req.user => token)
     //or the user is a policeOfficer or admin
